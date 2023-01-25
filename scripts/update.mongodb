@@ -1,0 +1,8 @@
+// добавить бренд всем телефонам без бренда
+db.phones.updateMany(
+  {brand: {$exists: false}},
+  { $set: {brand : "Unknown"}}
+);
+
+// изменить status с A на accepted 
+// изменить status с D на delivered
