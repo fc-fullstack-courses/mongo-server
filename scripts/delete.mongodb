@@ -1,0 +1,8 @@
+// удалить все телефоны без поля price
+db.phones.deleteMany({price: {$exists: false}});
+
+// удалить все телефоны
+db.phones.deleteMany({});
+
+// удалить таблицу
+db.phones.drop();
