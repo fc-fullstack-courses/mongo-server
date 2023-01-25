@@ -1,0 +1,59 @@
+db.createCollection("phones", {
+  validator: {
+    $jsonSchema: {
+      required: ['model', 'manufacturer', 'price', 'specs'],
+      bsonType: "object",
+      properties : {
+        model : {
+          bsonType: "string",
+          description: "model field is required"
+        },
+        manufacturer: {
+          bsonType: 'string',
+          description: "manufacturer field is required"
+        },
+        isUsed: {
+          bsonType: 'bool'
+        },
+        price : {
+          bsonType: 'number',
+          description: "price field is required and must be positive",
+          minimum : 0.99
+        },
+        specs : {
+          bsonType: 'object',
+          required: ['ram', 'cpu'],
+          properties: {
+            ram: {
+              bsonType: 'int',
+              minimum: 1,
+              description: 'ram must be positive integer'
+            },
+            cpu: {
+              bsonType: 'string',
+              description: 'cpu is required'
+            }
+          }
+        }
+      }
+    }
+  }
+});
+
+db.phones.drop();
+
+db.phones.insertOne({
+  model: "Iphone XX",
+  manufacturer: "Apple",
+  price: 1,
+  specs: {
+    ram: 8,
+    cpu: 'Some apple cpu'
+  }
+})
+
+db.phones.insertOne({
+  model: "Iphone XX1",
+  manufacturer: "Apple",
+  price: 10,
+})
