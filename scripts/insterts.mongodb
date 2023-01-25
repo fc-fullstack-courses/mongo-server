@@ -1,0 +1,7 @@
+db.phones.insertOne({model: 'Pixel 2.1', price: 15999.99, createdAt: Date.now()});
+
+db.phones.insertMany([
+  {model: 'Pixel 2.1', price: 15999.99, createdAt: Date.now()},
+  {model: 'Pixel 2.2', price: 16999.99, createdAt: Date.now()},
+  {model: 'Pixel 2.3', price: 17999.99, createdAt: Date.now()},
+  ]);
