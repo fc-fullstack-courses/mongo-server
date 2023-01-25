@@ -1,0 +1,21 @@
+// SELECT * FROM phones;
+db.phones.find({});
+
+// SELECT * FROM phones WHERE price = 15999.99 AND model = 'Pixel 2';
+db.phones.find({price : 15999.99, model: "Pixel 2"});
+
+// SELECT * FROM phones WHERE price < 17000 AND price > 16000 ;
+db.phones.find({ price : { $lt : 17000, $gt: 16000 } });
+
+// SELECT * FROM phones WHERE( price BEETWEEN 16001 AND 17001) OR model = "IPhone XXI" 
+db.phones.find({ $or: [
+  { price : { $lt : 17000, $gt: 16000 } }, 
+  { model: "IPhone XXI"} ,
+  // { $or: [
+    // ...
+  // ]}
+  ]});
+
+// найти все телефоны с ценой
+// db.phones.find({price: { $exists: true }});
+db.phones.find({price: { $exists: 1 }});
