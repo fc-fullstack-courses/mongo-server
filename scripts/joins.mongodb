@@ -109,3 +109,17 @@ db.filmMakers.aggregate([
 
 показать конкретную фирму и всех её рабочих
 */
+//показать конкретную фирму(кинопроизводитель) и всех её рабочих(фильмы)
+db.filmMakers.aggregate([
+  {
+    $match: { name: "Warner brothers"}
+  },
+  {
+    $lookup: {
+      from: 'films', //  <- 'workers / employees'
+      localField: '_id',
+      foreignField: 'filmMakerId', // <- 'companyId'
+      as: 'workers'
+    }
+  }
+]);
