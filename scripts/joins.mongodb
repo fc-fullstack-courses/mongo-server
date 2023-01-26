@@ -1,0 +1,105 @@
+//
+
+db.createCollection('filmMakers', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['name'],
+      properties: {
+        name: {
+          bsonType: 'string'
+        },
+        address : {
+          bsonType: 'object',
+          required: ['country', 'city'],
+          properties: {
+            country: {
+              bsonType: "string"
+            },
+            city: {
+              bsonType: "string"
+            }
+          }
+        },
+        foundedIn : {
+          bsonType: 'int'
+        }
+      }
+    }
+  }
+});
+
+db.createCollection('films', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['title','filmMakerId', 'duration'],
+      properties: {
+        title: {
+          bsonType: 'string'
+        },
+        filmMakerId: {
+          bsonType: 'objectId'
+        },
+        releasedIn: {
+          bsonType: 'int'
+        },
+        duration: {
+          bsonType: 'number'
+        }
+      }
+    }
+  }
+});
+
+//
+db.filmMakers.insertMany([
+  { name: 'Universal pictures', foundedIn: 1950},
+  { name: 'Warner brothers', foundedIn: 1966},
+  { name: '20 Century fox', foundedIn: 1970},
+])
+//
+db.films.insertMany([
+  {title: 'Titanic', filmMakerId: new ObjectId('63d2b1edd8f158f0ec84f560'), duration: 3.50},
+  {title: 'Super Mario', filmMakerId: new ObjectId('63d2b1edd8f158f0ec84f560'), duration: 2.45},
+  {title: 'Batman', filmMakerId: new ObjectId('63d2b1edd8f158f0ec84f561'), duration: 2.15},
+  {title: 'Justice League', filmMakerId: new ObjectId('63d2b1edd8f158f0ec84f561'), duration: 3.45},
+  {title: 'Inspector Gadget', filmMakerId: new ObjectId('63d2b1edd8f158f0ec84f561'), duration: 1.58},
+  {title: 'Avatar', filmMakerId: new ObjectId('63d2b1edd8f158f0ec84f562'), duration: 4.02},
+])
+//
+db.filmMakers.aggregate([
+  {
+    $lookup: {
+      from: 'films', //<collection to join>
+      localField: '_id', //<field from the input documents>
+      foreignField: 'filmMakerId', //<field from the documents of the "from" collection>,
+      as: 'filmsArray'  // <output array field>
+    }
+  }
+]);
+//
+db.filmMakers.aggregate([
+  {
+    $lookup: {
+      from: 'films', //<collection to join>
+      localField: '_id', //<field from the input documents>
+      foreignField: 'filmMakerId', //<field from the documents of the "from" collection>,
+      as: 'film'  // <output array field>
+    }
+  },
+  {
+    $unwind: "$film"
+  },
+  {
+    $unset: ["film.filmMakerId","_id", "film._id"]
+  },
+  {
+    $group: {
+      _id: "$name",
+      filmsAmount: {
+        $count: {}
+      }
+    }
+  }
+]);
