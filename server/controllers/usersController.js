@@ -14,8 +14,13 @@ module.exports.createUser = async (req, res, next) => {
 };
 
 module.exports.getUsers = async (req, res, next) => {
+  const {
+    query: { limit = 0, offset = 0 },
+  } = req;
   const users = await User.find()
-  .select(['-password', '-__v']);
+    .select(['-password', '-__v'])
+    .limit(limit)
+    .skip(offset);
 
   res.send({ data: users });
 };
@@ -25,8 +30,7 @@ module.exports.getUser = async (req, res, next) => {
     params: { userId },
   } = req;
 
-  const user = await User.findById(userId)
-  .select(['-password', '-__v']);
+  const user = await User.findById(userId).select(['-password', '-__v']);
 
   if (!user) {
     return next(createHttpError(404, 'User not found'));
