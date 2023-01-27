@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-const DB_STRING =
-  process.env.DB_STRING ||
-  'mongodb+srv://admin:admin@cluster0.rydpyo5.mongodb.net/chatDb';
+const DB_STRING = process.env.DB_STRING || 'mongodb://localhost:27017/test';
 
 async function connectToDb() {
   await mongoose.connect(DB_STRING);
