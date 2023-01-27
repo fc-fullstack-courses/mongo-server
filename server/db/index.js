@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-const DB_STRING = process.env.DB_STRING || 'mongodb://localhost:27017/test';
+const { DB_STRING } = require('../constants');
 
 async function connectToDb() {
   await mongoose.connect(DB_STRING);
