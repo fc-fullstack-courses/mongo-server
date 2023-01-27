@@ -14,7 +14,8 @@ module.exports.createUser = async (req, res, next) => {
 };
 
 module.exports.getUsers = async (req, res, next) => {
-  const users = await User.find();
+  const users = await User.find()
+  .select(['-password', '-__v']);
 
   res.send({ data: users });
 };
@@ -24,7 +25,8 @@ module.exports.getUser = async (req, res, next) => {
     params: { userId },
   } = req;
 
-  const user = await User.findById(userId);
+  const user = await User.findById(userId)
+  .select(['-password', '-__v']);
 
   if (!user) {
     return next(createHttpError(404, 'User not found'));
@@ -42,7 +44,7 @@ module.exports.updateUser = async (req, res, next) => {
 
     const updatedUser = await User.findByIdAndUpdate(userId, body, {
       new: true,
-    });
+    }).select(['-password', '-__v']);
 
     if (!updatedUser) {
       return next(createHttpError(404, 'User not found'));
