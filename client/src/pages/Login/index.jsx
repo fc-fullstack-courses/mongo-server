@@ -1,11 +1,13 @@
 import React from 'react';
 import Header from '../../components/Header';
+import LoginForm from '../../components/LoginForm';
 
 function LoginPage() {
   return (
     <div>
       <Header />
-      LoginPage
+      <h1>Login now</h1>
+      <LoginForm />
     </div>
   );
 }

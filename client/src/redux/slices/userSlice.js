@@ -1,6 +1,23 @@
-const { createSlice } = require('@reduxjs/toolkit');
-
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import * as API from '../../api';
 const SLICE_NAME = 'user';
+
+const login = createAsyncThunk(
+  `${SLICE_NAME}/login`,
+  async (userData, thunkAPI) => {
+    try {
+      const {
+        data: {
+          data: { user },
+        },
+      } = await API.login(userData);
+
+      return user;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 const initialState = {
   data: null,
@@ -16,11 +33,25 @@ const userSlice = createSlice({
       state.error = null;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(login.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.data = action.payload;
+    });
+    builder.addCase(login.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+  },
 });
 
 const { reducer, actions } = userSlice;
 const { clearErrors } = actions;
 
-export { clearErrors };
+export { clearErrors, login };
 
 export default reducer;
