@@ -1,13 +1,8 @@
 const createHttpError = require('http-errors');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
-const User = require('../db/models/users');
-const Token = require('../db/models/token');
-const { ACCESS_TOKEN_SECRET, ACCESS_TOKEN_TIME } = require('../constants');
 
-const jwtSign = promisify(jwt.sign);
-const jwtVerify = promisify(jwt.verify);
+const User = require('../db/models/users');
+const AuthService = require('../services/auth.service');
 
 module.exports.registration = async (req, res, next) => {
   try {
@@ -15,20 +10,9 @@ module.exports.registration = async (req, res, next) => {
 
     const user = await User.create(body);
 
-    const tokenPayload = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      id: user._id,
-    };
+    const sessionData = await AuthService.createSession(user);
 
-    // создаем токен для пользователя
-    const accessToken = await jwtSign(tokenPayload, ACCESS_TOKEN_SECRET, {
-      expiresIn: ACCESS_TOKEN_TIME,
-    });
-
-    await Token.create({ userId: user._id, token: accessToken });
-
-    res.status(201).send({ data: user, tokens: { access: accessToken } });
+    res.status(201).send({ data: sessionData });
   } catch (error) {
     next(error);
   }
@@ -51,58 +35,18 @@ module.exports.login = async (req, res, next) => {
     return next(createHttpError(404, 'Invalid email / password'));
   }
 
-  const tokenPayload = {
-    firstName: foundUser.firstName,
-    lastName: foundUser.lastName,
-    id: foundUser._id,
-  };
+  const sessionData = await AuthService.createSession(foundUser);
 
-  const accessToken = await jwtSign(tokenPayload, ACCESS_TOKEN_SECRET, {
-    expiresIn: ACCESS_TOKEN_TIME,
-  });
-
-  await Token.create({ userId: foundUser._id, token: accessToken });
-
-  res.send({ data: foundUser, tokens: { access: accessToken } });
+  res.status(200).send({ data: sessionData });
 };
 
 module.exports.refresh = async (req, res, next) => {
   try {
-    const {
-      body: { token },
-    } = req;
+    const { tokenData } = req;
 
-    // Ищем токен в БД
-    const foundToken = await Token.findOne({token});
+    const session = await AuthService.refreshSession(tokenData);
 
-    if(!foundToken) {
-      return next(createHttpError(404, 'Token not found'));
-    }
-
-    // Проверяем его валидность
-    const { userId } = await jwtVerify(token, ACCESS_TOKEN_SECRET);
-
-    // Ищем данные юзера
-    const foundUser = await User.findById(userId);
-
-    if (!foundUser) {
-      return next(createHttpError(404, 'User not found'));
-    }
-
-    const tokenPayload = {
-      firstName: foundUser.firstName,
-      lastName: foundUser.lastName,
-      id: foundUser._id,
-    };
-  
-    const accessToken = await jwtSign(tokenPayload, ACCESS_TOKEN_SECRET, {
-      expiresIn: ACCESS_TOKEN_TIME,
-    });
-
-    // обновляем токен в БД
-    await Token.findOneAndUpdate({token}, {token: accessToken});
-
-    res.send({ data: foundUser, tokens: { access: accessToken } });
+    res.send({ data: session });
   } catch (error) {
     next(error);
   }
