@@ -1,5 +1,6 @@
 const createHttpError = require('http-errors');
 const JWTService = require('../services/jwt.service');
+const Token = require('../db/models/token');
 
 // refresh route only
 module.exports.checkRefreshToken = async (req, res, next) => {
@@ -9,9 +10,15 @@ module.exports.checkRefreshToken = async (req, res, next) => {
     } = req;
 
     // по факту будет verifyRefreshToken
-    const tokenData = await JWTService.verifyAccessToken(token);
+    await JWTService.verifyAccessToken(token);
 
-    req.tokenData = tokenData;
+    const refreshTokenInstance = await Token.findOne({ token });
+
+    if (!refreshTokenInstance) {
+      return next(createHttpError(404, 'Token not found'));
+    }
+
+    req.tokenData = refreshTokenInstance;
     next();
   } catch (error) {
     next(error);

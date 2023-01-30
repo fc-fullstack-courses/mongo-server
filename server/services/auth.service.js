@@ -17,9 +17,9 @@ module.exports.createSession = async (user) => {
   return { user, tokens: { access: accessToken } };
 };
 
-module.exports.refreshSession = async (token) => {
+module.exports.refreshSession = async (tokenInstance) => {
   // Ищем данные юзера
-  const foundUser = await User.findById(token.userId);
+  const foundUser = await User.findById(tokenInstance.userId);
 
   if (!foundUser) {
     return next(createHttpError(404, 'User not found'));
@@ -34,7 +34,10 @@ module.exports.refreshSession = async (token) => {
   const accessToken = await JWTService.createAccessToken(tokenPayload);
 
   // обновляем токен в БД
-  await Token.findOneAndUpdate({ token }, { token: accessToken });
+  await Token.findOneAndUpdate(
+    { token: tokenInstance.token },
+    { token: accessToken }
+  );
 
   return { user: foundUser, tokens: { access: accessToken } };
 };
