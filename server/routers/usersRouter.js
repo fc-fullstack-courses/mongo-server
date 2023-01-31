@@ -1,5 +1,7 @@
 const usersRouter = require('express').Router();
 const UserController = require('../controllers/usersController');
+const { checkAccessToken } = require('../middlewares/token.mw');
+const messageRouter = require('./messageRouter');
 
 usersRouter
   .route('/')
@@ -12,5 +14,6 @@ usersRouter
   .put(UserController.updateUser)
   .delete(UserController.deleteUser);
 
-  
+usersRouter.use('/:userId/messages', checkAccessToken, messageRouter);
+
 module.exports = usersRouter;
