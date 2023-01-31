@@ -19,6 +19,23 @@ const login = createAsyncThunk(
   }
 );
 
+const registration = createAsyncThunk(
+  `${SLICE_NAME}/registration`,
+  async (userData, thunkAPI) => {
+    try {
+      const {
+        data: {
+          data: { user },
+        },
+      } = await API.registration(userData);
+
+      return user;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   data: null,
   isLoading: false,
@@ -46,12 +63,25 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     });
+
+    builder.addCase(registration.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(registration.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.data = action.payload;
+    });
+    builder.addCase(registration.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
   },
 });
 
 const { reducer, actions } = userSlice;
 const { clearErrors } = actions;
 
-export { clearErrors, login };
+export { clearErrors, login, registration };
 
 export default reducer;
