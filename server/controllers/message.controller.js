@@ -12,7 +12,9 @@ module.exports.createMessage = async (req, res, next) => {
 };
 
 module.exports.getMessages = async (req, res, next) => {
-  const messages = await Message.find().populate('author').select(['-__v']);
+  const messages = await Message.find()
+    .populate({ path: 'author', select: ['-__v', '-password'] })
+    .select(['-__v']);
 
   res.send({ data: messages });
 };
