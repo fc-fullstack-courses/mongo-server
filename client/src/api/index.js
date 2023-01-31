@@ -12,7 +12,10 @@ httpClient.interceptors.response.use(
     if (response?.data?.data?.tokens) {
       // ответ был с токенами
       // localStorage.setItem('token', response.data.data.tokens.refresh);
-      localStorage.setItem('token', response.data.data.tokens.access);
+      localStorage.setItem(
+        CONSTANTS.REFRESH_TOKEN,
+        response.data.data.tokens.access
+      );
       // access в инкапсуляции
       accessToken = response.data.data.tokens.access;
     }
@@ -26,7 +29,7 @@ httpClient.interceptors.response.use(
       response: { status },
     } = error;
 
-    const refreshFromLS = localStorage.getItem('token');
+    const refreshFromLS = localStorage.getItem(CONSTANTS.REFRESH_TOKEN);
 
     if (status === 419 && refreshFromLS) {
       const {
@@ -40,7 +43,7 @@ httpClient.interceptors.response.use(
       });
 
       // обновляем нашу токены
-      localStorage.setItem('token', access);
+      localStorage.setItem(CONSTANTS.REFRESH_TOKEN, access);
       accessToken = access;
 
       // устанавливаю заголовок
