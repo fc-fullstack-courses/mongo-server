@@ -4,6 +4,10 @@ const CONSTANTS = {
   SALT_ROUNDS: 10,
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
   ACCESS_TOKEN_TIME: process.env.ACCESS_TOKEN_TIME,
+  SOCKET_EVENTS: {
+    NEW_MESSAGE: 'newMessage',
+    NEW_MESSAGE_ERROR: 'newMessageError',
+  },
 };
 
 module.exports = CONSTANTS;
