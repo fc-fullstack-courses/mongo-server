@@ -62,6 +62,7 @@ httpClient.interceptors.request.use(
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+    config.headers["ngrok-skip-browser-warning"] = true;
 
     return config;
   },

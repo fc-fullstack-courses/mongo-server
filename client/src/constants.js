@@ -1,6 +1,6 @@
 const CONSTANTS = {
-  HTTP_SERVER_URL: 'http://localhost:5000',
-  WS_SERVER_URL: 'ws://localhost:5000',
+  HTTP_SERVER_URL: 'https://3f3a-45-128-188-229.eu.ngrok.io',
+  WS_SERVER_URL: 'wss://3f3a-45-128-188-229.eu.ngrok.io',
   REFRESH_TOKEN: 'token',
   SOCKET_EVENTS: {
     NEW_MESSAGE: 'newMessage',
