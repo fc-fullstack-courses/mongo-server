@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { DB_STRING } = require('../constants');
 
 async function connectToDb() {
-  await mongoose.connect(DB_STRING);
+  await mongoose.connect('mongodb://mongo:27017/dockerDb');
 }
 
 connectToDb().catch((err) => {

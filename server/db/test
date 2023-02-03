@@ -1,0 +1,17 @@
+alpine1
+alpine2
+alpine4
+// =====
+alpine3
+alpine4
+
+
+    client 
+       /\
+      ||
+      \/
+     server
+  /\        /\
+  ||        ||
+  \/        \/
+postgres   mongo

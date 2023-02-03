@@ -1,0 +1,33 @@
+services:
+  # инструкции по созданию контейнеров
+  server-app:
+  # инструкции для билда образа из докерфайлов
+    # build: ./server путь до папк с докефайлом
+    build: 
+    # путь до папк с докефайлом
+      context: ./server
+      dockerfile: Dockerfile-dev # имя докерфайла
+    ports:
+      - "9999:5000"
+    # переменные окружения из файла
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app:ro
+    depends_on:
+      - mongo
+
+  mongo:
+    # указываем образ монги
+    image: mongo:latest
+    # переменные окружения
+    environment:
+      # список
+      - MONGO_INITDB_DATABASE=dockerDb
+    ports:
+      - "27018:27017"
+    volumes:
+      - ~/backups/compose/mongo_db:/data/db
+    # перезапуск контейнера
+    restart: always
+

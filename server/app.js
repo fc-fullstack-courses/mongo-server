@@ -13,6 +13,10 @@ app.use(async (err, req, res, next) => {
   res.status(err.status || 500).send({ error: err });
 });
 
+app.get('/', (req, res, next) => {
+  res.send('Hello docker 123');
+});
+
 app.use(tokenErrorHandler);
 app.use(basicHandler);
 
