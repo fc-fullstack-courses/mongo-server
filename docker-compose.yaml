@@ -16,6 +16,9 @@ services:
       - ./server:/app:ro
     depends_on:
       - mongo
+    networks:
+      - db-net
+      - front-net
 
   mongo:
     # указываем образ монги
@@ -30,4 +33,12 @@ services:
       - ~/backups/compose/mongo_db:/data/db
     # перезапуск контейнера
     restart: always
+    networks:
+      - db-net
 
+networks:
+# создает сеть
+  db-net: # будет приклеивать имя папки
+    name: 'db-network' # переопределение имени сети
+  front-net:
+    name: 'frontend-network'
